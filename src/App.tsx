@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Upload, Moon, Sun, BarChart3, PieChart, Download, FileText, Search, Heart } from 'lucide-react';
 import FileUpload from './components/FileUpload';
 import Dashboard from './components/Dashboard';
+import CelebrationEffect from './components/CelebrationEffect';
 import { ProcessedData } from './types';
 
 interface UploadedFile {
@@ -14,6 +15,8 @@ function App() {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [combinedData, setCombinedData] = useState<ProcessedData | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [hasTriggeredCelebration, setHasTriggeredCelebration] = useState(false);
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -41,6 +44,17 @@ function App() {
 
     setCombinedData(combined);
   };
+
+  // Check if celebration should trigger
+  React.useEffect(() => {
+    if (combinedData && !hasTriggeredCelebration) {
+      const totalRevenue = combinedData.records.reduce((sum, record) => sum + record.revenue, 0);
+      if (totalRevenue >= 12000) {
+        setShowCelebration(true);
+        setHasTriggeredCelebration(true);
+      }
+    }
+  }, [combinedData, hasTriggeredCelebration]);
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
@@ -86,10 +100,16 @@ function App() {
               setUploadedFiles([]);
               setCombinedData(null);
               setSearchQuery('');
+              setHasTriggeredCelebration(false);
             }}
           />
         )}
       </main>
+
+      <CelebrationEffect 
+        isActive={showCelebration} 
+        onComplete={() => setShowCelebration(false)} 
+      />
 
       <footer className={`mt-16 border-t transition-colors duration-300 ${
         isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
