@@ -48,7 +48,7 @@ const CelebrationEffect: React.FC<CelebrationEffectProps> = ({ isActive, onCompl
       {/* Celebration message */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 text-white px-8 py-4 rounded-2xl shadow-2xl animate-bounce text-2xl font-bold">
-          🎉 Congratulations! Revenue Goal Achieved! 🎉
+          🎉 Congratulations! MM team! 🎉
         </div>
       </div>
 
