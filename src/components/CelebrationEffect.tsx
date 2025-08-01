@@ -8,6 +8,9 @@ interface CelebrationEffectProps {
 const CelebrationEffect: React.FC<CelebrationEffectProps> = ({ isActive, onComplete }) => {
   const [balloons, setBalloons] = useState<Array<{ id: number; x: number; delay: number; color: string }>>([]);
   const [confetti, setConfetti] = useState<Array<{ id: number; x: number; y: number; rotation: number; color: string; delay: number }>>([]);
+  const [goldenStars, setGoldenStars] = useState<Array<{ id: number; x: number; y: number; size: number; delay: number; duration: number }>>([]);
+  const [leftPopperConfetti, setLeftPopperConfetti] = useState<Array<{ id: number; x: number; y: number; vx: number; vy: number; rotation: number; color: string; delay: number }>>([]);
+  const [rightPopperConfetti, setRightPopperConfetti] = useState<Array<{ id: number; x: number; y: number; vx: number; vy: number; rotation: number; color: string; delay: number }>>([]);
 
   useEffect(() => {
     if (isActive) {
@@ -29,8 +32,44 @@ const CelebrationEffect: React.FC<CelebrationEffectProps> = ({ isActive, onCompl
         delay: Math.random() * 3
       }));
 
+      // Generate golden stars
+      const newGoldenStars = Array.from({ length: 30 }, (_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: Math.random() * 20 + 15, // 15-35px
+        delay: Math.random() * 2,
+        duration: Math.random() * 2 + 2 // 2-4 seconds
+      }));
+
+      // Generate left party popper confetti
+      const newLeftPopperConfetti = Array.from({ length: 40 }, (_, i) => ({
+        id: i,
+        x: 5, // Start from left bottom
+        y: 90,
+        vx: Math.random() * 60 + 20, // Velocity towards right
+        vy: -(Math.random() * 80 + 40), // Velocity upwards
+        rotation: Math.random() * 360,
+        color: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF9FF3', '#54A0FF'][Math.floor(Math.random() * 8)],
+        delay: Math.random() * 0.5
+      }));
+
+      // Generate right party popper confetti
+      const newRightPopperConfetti = Array.from({ length: 40 }, (_, i) => ({
+        id: i,
+        x: 95, // Start from right bottom
+        y: 90,
+        vx: -(Math.random() * 60 + 20), // Velocity towards left
+        vy: -(Math.random() * 80 + 40), // Velocity upwards
+        rotation: Math.random() * 360,
+        color: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF9FF3', '#54A0FF'][Math.floor(Math.random() * 8)],
+        delay: Math.random() * 0.5
+      }));
       setBalloons(newBalloons);
       setConfetti(newConfetti);
+      setGoldenStars(newGoldenStars);
+      setLeftPopperConfetti(newLeftPopperConfetti);
+      setRightPopperConfetti(newRightPopperConfetti);
 
       // Auto-complete after 4 seconds
       const timer = setTimeout(() => {
@@ -52,6 +91,70 @@ const CelebrationEffect: React.FC<CelebrationEffectProps> = ({ isActive, onCompl
         </div>
       </div>
 
+      {/* Golden Stars */}
+      {goldenStars.map((star) => (
+        <div
+          key={`star-${star.id}`}
+          className="absolute animate-golden-shine"
+          style={{
+            left: `${star.x}%`,
+            top: `${star.y}%`,
+            fontSize: `${star.size}px`,
+            animationDelay: `${star.delay}s`,
+            animationDuration: `${star.duration}s`
+          }}
+        >
+          ⭐
+        </div>
+      ))}
+
+      {/* Left Party Popper Confetti */}
+      {leftPopperConfetti.map((piece) => (
+        <div
+          key={`left-popper-${piece.id}`}
+          className="absolute animate-popper-explosion-left"
+          style={{
+            left: `${piece.x}%`,
+            top: `${piece.y}%`,
+            '--vx': `${piece.vx}vw`,
+            '--vy': `${piece.vy}vh`,
+            animationDelay: `${piece.delay}s`,
+            animationDuration: '3s'
+          } as React.CSSProperties}
+        >
+          <div
+            className="w-4 h-4 rounded-sm shadow-lg"
+            style={{
+              backgroundColor: piece.color,
+              transform: `rotate(${piece.rotation}deg)`
+            }}
+          ></div>
+        </div>
+      ))}
+
+      {/* Right Party Popper Confetti */}
+      {rightPopperConfetti.map((piece) => (
+        <div
+          key={`right-popper-${piece.id}`}
+          className="absolute animate-popper-explosion-right"
+          style={{
+            left: `${piece.x}%`,
+            top: `${piece.y}%`,
+            '--vx': `${piece.vx}vw`,
+            '--vy': `${piece.vy}vh`,
+            animationDelay: `${piece.delay}s`,
+            animationDuration: '3s'
+          } as React.CSSProperties}
+        >
+          <div
+            className="w-4 h-4 rounded-sm shadow-lg"
+            style={{
+              backgroundColor: piece.color,
+              transform: `rotate(${piece.rotation}deg)`
+            }}
+          ></div>
+        </div>
+      ))}
       {/* Balloons */}
       {balloons.map((balloon) => (
         <div
